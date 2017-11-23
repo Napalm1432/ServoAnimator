@@ -5,6 +5,8 @@ also there is a folder with the files for the arduino code.
 
 A compiled version of the unity scene will also be available!
 
+To use the Animator Script, simply attach to any gameobject and configure!
+
 UNITY ANIMATOR FEATURES:
 - Animate up to 8 servos
 - Set min and max values.
