@@ -7,6 +7,10 @@ A compiled version of the unity scene will also be available!
 
 To use the Animator Script, simply attach to any gameobject and configure!
 
+To use the arduino script, you need the sdreadcoderead.ino, servopins.h and moveservos.h file.
+Edit the files as neccesary, and upload to arduino!
+
+
 UNITY ANIMATOR FEATURES:
 - Animate up to 8 servos
 - Set min and max values.
