@@ -1,10 +1,14 @@
 ﻿#pragma strict
 import System;
 import System.IO;
+//FILE SAVING
 var fileName = "Animation";
 var fileExtension = ".R3D";
 var realFileName : String;
+var strArr : String[];
+var strArr2 : String[];
 
+//FRAMES AND AXES
 var FrameString : String = "0";
 var showServos = true;
 var AxesNr = 6;
@@ -16,32 +20,29 @@ var AxesVal : float[];
 var AxesNrS : String = "6";
 var savedFrames : String[];
 var currentValues : String[];
-
-//GUI
+var frameR : String = "30";
+var frameRate= 30;
+var ThisFrame;
 var AnimLength : String = "length in seconds";
 var AnimLengthS : float = 0.0;
 var animationTime = 5; //in seconds
 var setframes : int = 0;
 var currentFrame : float = 0.0;
-var ThisFrame;
-var frameR : String = "30";
-var frameRate= 30;
 
+//GUI
 var waveform : Texture2D;
 
+//CONTROLS
 var pause = false;
 var stop = true;
-
 var PlayModel = false;
 var ServoModel = true;
-
-var strArr : String[];
-var strArr2 : String[];
-
-
 var camPivot:Transform;
 var camSlider : float = 0.0;
+
+//MISC
 var firstStart = true;
+
 function Start (){
 	//prefill arrays to avoid errors
 	if(AxesMin.length == 0)
@@ -54,15 +55,16 @@ function Start (){
 			AxesMax[i] = "180";
 		}
 	}
+	//also to avoid errors
 	if(AxesVal.length == 0){AxesVal = new float[AxesNr];}
 
-
-	//set amount of frames needed for saved frames
 
 }
 
 function Update () {
+	//Fix the final filename for writing. (Why am i doing this every frame?)
 	realFileName = fileName + fileExtension;
+	//Switch between showing the current servo values on the 3d model, to showing frame values on the model.
 	if(PlayModel)
 	{
 		ShowPlayOnModel();
@@ -74,6 +76,7 @@ function Update () {
 		PlayModel = false;
 	}
 }
+//Populate the empty frames, if it finds an empty frame fill it with the values of the frame before that. HARSH METHOD :S
 function populateEmptyFrames()
 {
 	for(var i = 0; i < savedFrames.length; i++)
@@ -84,6 +87,7 @@ function populateEmptyFrames()
 		}
 	}
 }
+//Write the values from the animation frames to a file. nothing to explain here
 function saveFramesToFile()
 {
 	if (File.Exists(realFileName))
@@ -98,12 +102,14 @@ function saveFramesToFile()
 	}
 	sr.Close();
 }
+//use the current frame values and show them on the model
 function ShowPlayOnModel ()
 {
-
+	//split up the string of the frame into seperate values
 	var useStr : String;
 	useStr = savedFrames[currentFrame];
 	strArr = useStr.Split(", "[0]);
+	//Go trough the values and set them to the correct model
 	for(var i = 1; i < strArr.length; i++)
 	{
 		var parseThis = strArr[i];
@@ -113,6 +119,7 @@ function ShowPlayOnModel ()
 		//Debug.Log((thisF + ModelOffsets[i-1]) * Mathf.Deg2Rad);
 	}
 }
+//Use the current servo values and show them on the model. Simple stuff, still doesn't work correctly....
 function ShowServoOnModel ()
 {
 	strArr2 = FrameString.Split(", "[0]);
@@ -127,6 +134,7 @@ function ShowServoOnModel ()
 		//Debug.Log((thisF + ModelOffsets[i-1]) * Mathf.Deg2Rad);
 	}
 }
+//when play button is pressed, loop trough the frames, does nothing more than that, ShowPlayOnModel(); just reads what is being played
 function play()
 {
 	while(!pause && !stop)
@@ -142,6 +150,7 @@ function play()
 		}
 	}
 }
+//not sure what i'm doing here? stop function already works....
 function stopPlay()
 {
 	//go back to first frame
@@ -167,15 +176,20 @@ function OnGUI()
 		for(var i=0; i< AxesNr;i++)
 		{
 			AxesMin[i] = GUI.TextField (Rect (Screen.width-225, 55 + (i*60), 40, 20), AxesMin[i], 25);
+			//i might be overdoing this:
 			var tempMin = parseFloat(AxesMin[i]);
 			tempMin = Mathf.FloorToInt(tempMin);
+
 			AxesMax[i] = GUI.TextField (Rect (Screen.width-65, 55 + (i*60), 40, 20), AxesMax[i], 25);
+			//again probably overdoing this
 			var tempMax = parseFloat(AxesMax[i]);
 			tempMax = Mathf.FloorToInt(tempMax);
+
 			AxesVal[i] = GUI.HorizontalSlider (Rect (Screen.width-225, 40 + (i*60), 200, 20), AxesVal[i], tempMin, tempMax);
+			//someone please teach me to code properly xD:
 			var valInt = Mathf.FloorToInt(AxesVal[i]);
 			var tempVal = valInt.ToString();
-			//var tempVal = AxesVal[i].ToString();
+
 			GUI.Label (Rect (Screen.width-130, 50 + (i*60), 40, 20), tempVal);
 		}
 	}
